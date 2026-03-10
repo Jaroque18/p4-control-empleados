@@ -1,0 +1,8 @@
+<div th:fragment="navbar">
+    <nav class="navbar navbar-light bg-light">
+        <div class="container-fluid">
+            <span class="navbar-brand">Sistema de Empleados</span>
+            <span sec:authentication="name"></span>
+        </div>
+    </nav>
+</div>

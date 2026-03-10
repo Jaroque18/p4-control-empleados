@@ -1,0 +1,291 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Dashboard Usuarios</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdn.datatables.net/1.13.6/css/dataTables.bootstrap5.min.css"
+    />
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <script src="//cdn.datatables.net/1.13.6/js/dataTables.bootstrap5.min.js"></script>
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  </head>
+  <body>
+    <div class="container mt-4">
+      <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+          <a class="navbar-brand" href="#">Sistema de Empleados</a>
+
+          <div class="d-flex">
+            <form th:action="@{/logout}" method="post" class="d-inline">
+              <input
+                type="hidden"
+                th:name="${_csrf.parameterName}"
+                th:value="${_csrf.token}"
+              />
+
+              <button type="submit" class="btn btn-outline-light btn-sm">
+                Cerrar Sesión
+              </button>
+            </form>
+          </div>
+        </div>
+      </nav>
+      <h2 class="mb-4 text-center">Administración de Usuarios</h2>
+      <div class="row justify-content-center mb-5">
+        <div class="col-md-8">
+          <div class="card shadow">
+            <div class="card-header bg-primary text-white">Nuevo Usuario</div>
+            <div class="card-body">
+              <form th:action="@{/admin/guardar}" method="post">
+                <div class="mb-2">
+                  <input
+                    type="text"
+                    name="cedula"
+                    placeholder="Cédula"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-2">
+                  <input
+                    type="text"
+                    name="nombre"
+                    placeholder="Nombre"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-2">
+                  <input
+                    type="email"
+                    name="correo"
+                    placeholder="Correo"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-2">
+                  <input
+                    type="password"
+                    name="contrasenia"
+                    placeholder="Contraseña"
+                    class="form-control"
+                    required
+                  />
+                </div>
+                <div class="mb-2">
+                  <select name="rol" class="form-control">
+                    <option value="ADMIN">Administrador</option>
+                    <option value="EMPLEADO">Empleado</option>
+                  </select>
+                </div>
+                <div class="d-grid">
+                  <button class="btn btn-success">Guardar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+     <div class="row justify-content-center">
+        <div class="col-md-10">
+          <div class="card shadow">
+            <div class="card-header bg-dark text-white">Lista de Usuarios</div>
+            <div class="card-body">
+              <table id="tablaUsuarios" class="table table-striped">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Cédula</th>
+                    <th>Nombre</th>
+                    <th>Correo</th>
+                    <th>Rol</th>
+                    <th>Editar</th>
+                    <th>Inactivar</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr th:each="u : ${usuarios}">
+                    <td th:text="${u.idUsuario}"></td>
+                    <td th:text="${u.cedula}"></td>
+                    <td th:text="${u.nombre}"></td>
+                    <td th:text="${u.correo}"></td>
+                    <td th:text="${u.rol}"></td>
+                    <td>
+                      <button
+                        class="btn btn-warning btn-sm"
+                        th:data-id="${u.idUsuario}"
+                        th:data-cedula="${u.cedula}"
+                        th:data-nombre="${u.nombre}"
+                        th:data-correo="${u.correo}"
+                        th:data-rol="${u.rol}"
+                        onclick="prepararEdicion(this)"
+                      >
+                        Editar
+                      </button>
+                    </td>
+                    <td>
+                      <button
+                        class="btn btn-danger btn-sm"
+                        th:onclick="confirmarEliminar([[${u.idUsuario}]])"
+                      >
+                        Inactivar
+                      </button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="modalEditar" tabindex="-1" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Editar Usuario</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form th:action="@{/admin/guardar}" method="post">
+              <input type="hidden" id="idUsuario" name="idUsuario" />
+              <div class="mb-3">
+                <label class="form-label">Cédula</label>
+                <input
+                  class="form-control"
+                  id="cedula"
+                  name="cedula"
+                  required
+                  readonly
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Nombre</label>
+                <input
+                  class="form-control"
+                  id="nombre"
+                  name="nombre"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Correo</label>
+                <input
+                  class="form-control"
+                  id="correo"
+                  name="correo"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label class="form-label">Rol</label>
+                <select class="form-control" id="rol" name="rol">
+                  <option value="ADMIN">Administrador</option>
+                  <option value="EMPLEADO">Empleado</option>
+                </select>
+              </div>
+              <div class="text-end">
+                <button
+                  type="button"
+                  class="btn btn-secondary"
+                  data-bs-dismiss="modal"
+                >
+                  Cancelar
+                </button>
+                <button type="submit" class="btn btn-primary">
+                  Actualizar Cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script th:inline="javascript">
+      $(document).ready(function () {
+        $("#tablaUsuarios").DataTable({
+          language: {
+            url: "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json",
+          },
+        });
+
+        const successMsg = /*[[${success}]]*/ null;
+        const errorMsg = /*[[${error}]]*/ null;
+
+        if (successMsg) {
+          Swal.fire({
+            icon: "success",
+            title: "¡Exito!",
+            text: successMsg,
+            timer: 3000,
+          });
+        }
+
+        if (errorMsg) {
+          let mensajeFinal = errorMsg.includes("50000")
+            ? "La cédula ingresada ya se encuentra registrada en el sistema."
+            : errorMsg;
+
+          Swal.fire({
+            icon: "error",
+            title: "Error de proceso",
+            text: mensajeFinal,
+          });
+        }
+      });
+
+      function prepararEdicion(btn) {
+        abrirModalEditar(
+          btn.getAttribute("data-id"),
+          btn.getAttribute("data-cedula"),
+          btn.getAttribute("data-nombre"),
+          btn.getAttribute("data-correo"),
+          btn.getAttribute("data-rol"),
+        );
+      }
+
+      function abrirModalEditar(id, cedula, nombre, correo, rol) {
+        document.getElementById("idUsuario").value = id;
+        document.getElementById("cedula").value = cedula;
+        document.getElementById("nombre").value = nombre;
+        document.getElementById("correo").value = correo;
+        document.getElementById("rol").value = rol;
+
+        new bootstrap.Modal(document.getElementById("modalEditar")).show();
+      }
+
+      function confirmarEliminar(id) {
+        Swal.fire({
+          title: "Inactivar usuario?",
+          text: "Esta acción solo se puede deshacer mediante el admin de base de datos",
+          icon: "warning",
+          showCancelButton: true,
+          confirmButtonColor: "#d33",
+          cancelButtonColor: "#3085d6",
+          confirmButtonText: "Sí, inactivar",
+          cancelButtonText: "Cancelar",
+        }).then((result) => {
+          if (result.isConfirmed) {
+            window.location.href = "/admin/eliminar/" + id;
+          }
+        });
+      }
+    </script>
+  </body>
+</html>
