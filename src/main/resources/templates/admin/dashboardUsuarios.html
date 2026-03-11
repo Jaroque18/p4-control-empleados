@@ -18,26 +18,26 @@
     <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   </head>
   <body>
-    <div class="container mt-4">
-      <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
-        <div class="container">
-          <a class="navbar-brand" href="#">Sistema de Empleados</a>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+      <div class="container">
+        <a class="navbar-brand" href="#">Sistema de Empleados</a>
 
-          <div class="d-flex">
-            <form th:action="@{/logout}" method="post" class="d-inline">
-              <input
-                type="hidden"
-                th:name="${_csrf.parameterName}"
-                th:value="${_csrf.token}"
-              />
+        <div class="d-flex">
+          <form th:action="@{/logout}" method="post" class="d-inline">
+            <input
+              type="hidden"
+              th:name="${_csrf.parameterName}"
+              th:value="${_csrf.token}"
+            />
 
-              <button type="submit" class="btn btn-outline-light btn-sm">
-                Cerrar Sesión
-              </button>
-            </form>
-          </div>
+            <button type="submit" class="btn btn-outline-light btn-sm">
+              Cerrar Sesión
+            </button>
+          </form>
         </div>
-      </nav>
+      </div>
+    </nav>
+    <div class="container mt-4">
       <h2 class="mb-4 text-center">Administración de Usuarios</h2>
       <div class="row justify-content-center mb-5">
         <div class="col-md-8">
@@ -67,9 +67,11 @@
                   <input
                     type="email"
                     name="correo"
-                    placeholder="Correo"
+                    placeholder="usuario@ejemplo.com"
                     class="form-control"
                     required
+                    pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                    title="Por favor, ingresa un correo electrónico válido."
                   />
                 </div>
                 <div class="mb-2">
@@ -95,7 +97,7 @@
           </div>
         </div>
       </div>
-     <div class="row justify-content-center">
+      <div class="row justify-content-center">
         <div class="col-md-10">
           <div class="card shadow">
             <div class="card-header bg-dark text-white">Lista de Usuarios</div>
@@ -186,11 +188,15 @@
               <div class="mb-3">
                 <label class="form-label">Correo</label>
                 <input
+                  type="email"
                   class="form-control"
                   id="correo"
                   name="correo"
                   required
+                  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$"
+                  title="Por favor, ingresa un correo electrónico válido."
                 />
+                
               </div>
               <div class="mb-3">
                 <label class="form-label">Rol</label>
