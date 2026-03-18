@@ -29,7 +29,7 @@ public class SecurityConfig {
                 .permitAll()
             )
             .exceptionHandling(ex -> ex
-                .accessDeniedPage("/acceso-denegado") 
+                .accessDeniedPage("/users/accesoDenegado") 
             )
             .logout(logout -> logout
                 .logoutUrl("/logout")
