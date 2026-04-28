@@ -11,6 +11,41 @@ import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 
+/**
+ * Implementacion del servicio de gestion de horarios
+ * 
+ * Responsabilidades principales:
+ * - Validar reglas de negocio antes de registrar entrada/salida
+ * - Coordinar consultas al repositorio con filtros opcionales
+ * - Gestionar el estado "En línea" / "Fuera de línea"
+ * 
+ * Validaciones implementadas:
+ * 
+ * 1. Entrada duplicada:
+ *    - Busca si existe entrada activa (sin salida) para el usuario
+ *    - Si existe, lanza excepción
+ *    - Esto evita múltiples entradas abiertas simultáneamente
+ * 
+ * 2. Salida sin entrada:
+ *    - Busca si existe entrada activa
+ *    - Si NO existe, lanza excepción
+ *    - El usuario debe marcar entrada antes de poder marcar salida
+ * 
+ * 3. Salida anterior a entrada:
+ *    - Compara LocalDateTime.now() con la hora de entrada
+ *    - Si la hora actual es anterior, lanza excepción
+ *    - Protege contra inconsistencias del reloj del servidor
+ * 
+ * 4. Duplicación de salidas:
+ *    - Implícitamente cubierta porque findEntradaActiva solo devuelve
+ *      registros con HoraSalida IS NULL
+ *    - Si ya tiene salida, no la encuentra y falla la validación #2
+ * 
+ * @Service: Componente de servicio registrado automaticamente por Spring.
+ * @Autowired: Inyeccion del repositorio para acceso a datos.
+ */
+
+
 @Service
 public class HorarioServiceImpl implements HorarioService {
 
