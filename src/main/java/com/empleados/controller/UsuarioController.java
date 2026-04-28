@@ -20,6 +20,11 @@ public class UsuarioController {
         return "users/inicio"; 
     }
 
+    @GetMapping("/users/accesoDenegado")
+    public String accesoDenegado() {
+        return "error/403"; 
+    }
+
     @GetMapping("/admin/usuarios")
     public String listar(Model model) {
         List<UsuarioSistema> usuarios = service.listar();

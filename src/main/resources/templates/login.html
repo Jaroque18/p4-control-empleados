@@ -1,54 +1,82 @@
 <!doctype html>
 <html xmlns:th="http://www.thymeleaf.org">
-  <head>
+<head>
     <meta charset="UTF-8" />
-    <title>Login</title>
+    <title>Login | Sistema Empleados</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        /* Fondo animado */
+        body {
+            background: linear-gradient(-45deg, #ee7752, #e73c7e, #23a6d5, #23d5ab);
+            background-size: 400% 400%;
+            animation: gradient 15s ease infinite;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-  </head>
+        @keyframes gradient {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
 
-  <body class="bg-light">
+        /* Estilo de la tarjeta */
+        .login-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: none;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            padding: 20px;
+            /* Animación de entrada */
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .btn-primary {
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: scale(1.02);
+        }
+    </style>
+</head>
+
+<body>
     <div class="container">
-      <div class="row justify-content-center mt-5">
-        <div class="col-md-4">
-          <div class="card shadow">
-            <div class="card-header text-center">
-              <h4>Iniciar Sesión</h4>
+        <div class="row justify-content-center">
+            <div class="col-md-4">
+                <div class="card login-card">
+                    <div class="card-body">
+                        <h3 class="text-center mb-4">¡Bienvenido!</h3>
+                        
+                        <form th:action="@{/login}" method="post">
+                            <div class="mb-3">
+                                <label class="form-label">Correo electrónico</label>
+                                <input type="text" name="username" class="form-control" placeholder="usuario@empresa.com" required />
+                            </div>
+
+                            <div class="mb-3">
+                                <label class="form-label">Contraseña</label>
+                                <input type="password" name="password" class="form-control" placeholder="••••••••" required />
+                            </div>
+
+                            <div class="d-grid mt-4">
+                                <button class="btn btn-primary btn-lg">Ingresar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
             </div>
-
-            <div class="card-body">
-              <form th:action="@{/login}" method="post">
-                <div class="mb-3">
-                  <label class="form-label">Correo</label>
-                  <input
-                    type="text"
-                    name="username"
-                    class="form-control"
-                    required
-                  />
-                </div>
-
-                <div class="mb-3">
-                  <label class="form-label">Contraseña</label>
-                  <input
-                    type="password"
-                    name="password"
-                    class="form-control"
-                    required
-                  />
-                </div>
-
-                <div class="d-grid">
-                  <button class="btn btn-primary">Ingresar</button>
-                </div>
-              </form>
-            </div>
-          </div>
         </div>
-      </div>
     </div>
-  </body>
+</body>
 </html>
