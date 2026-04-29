@@ -123,6 +123,15 @@
                 <i class="bi bi-file-earmark-excel"></i> Descargar Excel
               </a>
             </div>
+
+            <div class="col-md-auto" th:if="${reporte != null}">
+              <a
+                th:href="@{/admin/reportes/descargar/csv(anio=${anioFiltro}, mes=${mesFiltro})}"
+                class="btn btn-info"
+              >
+                Descargar CSV
+              </a>
+            </div>
           </form>
         </div>
       </div>

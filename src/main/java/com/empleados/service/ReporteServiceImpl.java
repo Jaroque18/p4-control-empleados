@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -211,6 +212,63 @@ public class ReporteServiceImpl implements ReporteService {
 
         return outputStream.toByteArray();
     }
+
+    @Override
+    public byte[] generarCSV(int anio, int mes) {
+        
+        List<ReporteEmpleado> datos = generarReporteMensual(anio, mes);
+        
+        StringBuilder csv = new StringBuilder();
+        
+        // ncabezados
+        csv.append("ID;Cédula;Nombre;Correo;Horas Trabajadas;Días Trabajados\n");
+
+        //Datos
+        for (ReporteEmpleado dto : datos) {
+            csv.append(dto.getIdUsuario()).append(";");
+            csv.append(escaparCSV(dto.getCedula())).append(";");
+            csv.append(escaparCSV(dto.getNombre())).append(";");
+            csv.append(escaparCSV(dto.getCorreo())).append(";");
+            csv.append(dto.getHorasTrabajadas()).append(";");
+            csv.append(dto.getDiasTrabajados()).append("\n");
+        }
+        
+        //Agregar byte Order Mark para UTF-8 la secuencia hexa
+        //programas como excel reconozca la codificación UTF-8
+        byte[] bom = new byte[] { (byte) 0xEF, (byte) 0xBB, (byte) 0xBF };
+        byte[] contenido = csv.toString().getBytes(StandardCharsets.UTF_8);
+        
+        //Combinar BOM + contenido
+        byte[] resultado = new byte[bom.length + contenido.length];
+        System.arraycopy(bom, 0, resultado, 0, bom.length);
+        System.arraycopy(contenido, 0, resultado, bom.length, contenido.length);
+        
+        return resultado;
+    }
+ 
+    /**
+     * Escapa valores para formato CSV.
+     * 
+     * Si el valor contiene comas, comillas o saltos de línea,
+     * se encierra entre comillas dobles y se escapan las comillas internas.
+     * 
+     * Ejemplo: Carro "Rápido" a "Carro ""Rápido"""
+     * 
+     * @param valor Texto a escapar
+     * @return Texto escapado según estándar CSV
+     */
+    private String escaparCSV(String valor) {
+        if (valor == null) return "";
+        
+        //contiene coma, comilla o salto de línea se encierra entre comillas
+        if (valor.contains(",") || valor.contains("\"") || valor.contains("\n")) {
+            //comillas dobles duplicadas
+            return "\"" + valor.replace("\"", "\"\"") + "\"";
+        }
+        
+        return valor;
+    }
+
 
     /**
      * Convierte el número de mes (1-12) a su nombre en español.
