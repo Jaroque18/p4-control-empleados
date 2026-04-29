@@ -125,4 +125,36 @@ public class ReporteController {
                         "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
                 .body(new ByteArrayResource(excelBytes));
     }
+
+    /**
+     * Descarga el reporte en formato CSV (.csv).
+     * * Proceso:
+     * 1. Invoca al servicio para generar el contenido CSV en bytes.
+     * 2. Configura el Content-Type como "text/csv".
+     * 3. Configura el nombre del archivo con extensión .csv.
+     * * @param anio Año del reporte
+     * @param mes  Mes del reporte
+     * @return ResponseEntity con el archivo CSV
+     */
+    @GetMapping("/descargar/csv")
+    public ResponseEntity<ByteArrayResource> descargarCSV(
+            @RequestParam int anio,
+            @RequestParam int mes) {
+
+        // Generar contenido CSV
+        byte[] csvBytes = reporteService.generarCSV(anio, mes);
+
+        // Nombre del archivo (ej: reporte_2026_03.csv)
+        String nombreArchivo = String.format("reporte_%d_%02d.csv", anio, mes);
+
+        // Configurar cabeceras
+        HttpHeaders headers = new HttpHeaders();
+        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + nombreArchivo);
+
+        return ResponseEntity.ok()
+                .headers(headers)
+                .contentLength(csvBytes.length)
+                .contentType(MediaType.parseMediaType("text/csv"))
+                .body(new ByteArrayResource(csvBytes));
+    }
 }

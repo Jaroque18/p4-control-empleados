@@ -51,4 +51,6 @@ public interface ReporteService {
      * @throws Exception Si ocurre un error durante la generacion del archivo
      */
     byte[] generarExcel(int anio, int mes) throws Exception;
+
+    byte[] generarCSV(int anio, int mes);
 }
